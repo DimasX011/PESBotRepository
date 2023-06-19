@@ -9,6 +9,9 @@ using Telegram.Bot.Types.ReplyMarkups;
 using static System.Net.Mime.MediaTypeNames;
 using TelegramBotData;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Data.SqlClient;
+using Microsoft.AspNetCore.Identity;
+using TelegramBotApi;
 
 namespace TelegramBotExperiments
 {
@@ -17,6 +20,7 @@ namespace TelegramBotExperiments
     {
 
         static ITelegramBotClient bot = new TelegramBotClient("5222140612:AAHfBdFbCoZheGo6tu5FCP6g_g68hjKsm6E");
+        static string ConnectionString = "data source=localhost\\SQLEXPRESS;initial catalog=TelegramBotData;User Id=TelegramBotUser;Password=1587panda;MultipleActiveResultSets=True;trustServerCertificate=true;App=EntityFramework";
         public static async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
         {
             // Некоторые действия
@@ -28,16 +32,39 @@ namespace TelegramBotExperiments
 
                 if (message.Text.ToLower() == "/start")
                 {
-                    await botClient.SendTextMessageAsync(message.Chat, "Добро пожаловать на борт, добрый путник!");
-                    return;
-                }
-                else if (message.Text == "Начнем")
-                {
+                    await botClient.SendTextMessageAsync(message.Chat, "Добро пожаловать в ПЭС - бот!");
                     var ikm = new InlineKeyboardMarkup(new[]
                     {
                         new[]
                         {
-                            InlineKeyboardButton.WithCallbackData("создать", "myCommand1"),
+                            InlineKeyboardButton.WithCallbackData("Начать", "Start"),
+                        },
+                    });
+
+                    await bot.SendTextMessageAsync(message.Chat.Id, "Для продолжения нажмите начать!", replyMarkup: ikm);
+
+                    return;
+                }
+                
+            }
+            if (update.Type == Telegram.Bot.Types.Enums.UpdateType.CallbackQuery)
+            {
+                CallbackQuery callbackQuery = update.CallbackQuery;
+                var message = update.Message;
+                if (message != null || callbackQuery.Data != null)
+                {
+                    if (callbackQuery.Data == "UserData")
+                    {
+                        UserEntityLogin userEntity = GetUserData("'" + callbackQuery.From.Username +"'");
+                        await botClient.SendTextMessageAsync(callbackQuery.From.Id, "Ваш логин " + userEntity.UserLogin +"\n"+  "Ваш пароль " + userEntity.UserPassword );
+                    }
+                    else if (callbackQuery.Data == "Start")
+                    {
+                        var ikm = new InlineKeyboardMarkup(new[]
+                        {
+                        new[]
+                        {
+                            InlineKeyboardButton.WithCallbackData("Учетные данные", "UserData"),
                         },
                         new[]
                         {
@@ -45,24 +72,10 @@ namespace TelegramBotExperiments
                         },
                     });
 
-                    await bot.SendTextMessageAsync(message.Chat.Id, "Уровень кнопок 1", replyMarkup: ikm);
-                    return;
-                }
-                await botClient.SendTextMessageAsync(message.Chat, "Привет-привет!!");
-            }
-
-            if (update.Type == Telegram.Bot.Types.Enums.UpdateType.CallbackQuery)
-            {
-                CallbackQuery callbackQuery = update.CallbackQuery;
-                var message = update.Message;
-                if (message != null || callbackQuery.Data != null)
-                {
-                    if (callbackQuery.Data == "myCommand1")
-                    {
-                        await botClient.SendTextMessageAsync(callbackQuery.From.Id, "Вызов кнопки 1!");
+                        await bot.SendTextMessageAsync(callbackQuery.From.Id, "Пожалуйста подождите ...", replyMarkup: ikm);
+                        return;
                     }
                 }
-
             }
 
         }
@@ -96,10 +109,41 @@ namespace TelegramBotExperiments
             }
         }
 
+        static UserEntityLogin GetUserData(string Username)
+        {
+            UserEntityLogin userEntity = new();
+            using (SqlConnection sqlConnection = new SqlConnection(ConnectionString)) 
+            {
+                try
+                {
+                    sqlConnection.Open();
+                    using (var sqlCommand = new SqlCommand(String.Format("  SELECT [UserLogin], [UserPassword] FROM [TelegramBotData].[dbo].[userData] WHERE UserName = {0}", Username), sqlConnection))
+                    {
+                        var reader = sqlCommand.ExecuteReader();
+
+                        while (reader.Read())
+                        {
+                            userEntity.UserLogin = reader["UserLogin"].ToString();
+                            userEntity.UserPassword = reader["UserPassword"].ToString();
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+               
+
+            }
+            return userEntity;
+            
+        }
+
         static public async void BotCall()
         {
             await Task.Run(() => BotStart());
         }
+
 
         static  void Main(string[] args)
         {
