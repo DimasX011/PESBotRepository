@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.6.33723.286
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PessBot", "PessBot.csproj", "{0AEED7B9-54B6-45A3-AB29-3848834AA388}"
+	ProjectSection(ProjectDependencies) = postProject
+		{EFD80EC4-739B-4FE1-A9F2-64CE38E88928} = {EFD80EC4-739B-4FE1-A9F2-64CE38E88928}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PesBotData", "..\PesBotData\PesBotData.csproj", "{EFD80EC4-739B-4FE1-A9F2-64CE38E88928}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0AEED7B9-54B6-45A3-AB29-3848834AA388}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0AEED7B9-54B6-45A3-AB29-3848834AA388}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0AEED7B9-54B6-45A3-AB29-3848834AA388}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0AEED7B9-54B6-45A3-AB29-3848834AA388}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EFD80EC4-739B-4FE1-A9F2-64CE38E88928}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EFD80EC4-739B-4FE1-A9F2-64CE38E88928}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EFD80EC4-739B-4FE1-A9F2-64CE38E88928}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EFD80EC4-739B-4FE1-A9F2-64CE38E88928}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C69EC7AB-A964-4847-A151-B18B54E05D35}
+	EndGlobalSection
+EndGlobal
